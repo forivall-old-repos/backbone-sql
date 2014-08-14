@@ -247,7 +247,7 @@ module.exports = class SqlCursor extends sync.Cursor
 
     if @hasCursorQuery('$page')
       query = @connection(@model_type.tableName())
-      _appendWhere(query, @_conditions)
+      _appendWhere(query, @_conditions, @model_type.tableName())
       @_appendRelatedWheres(query)
       @_appendJoinedWheres(query)
       query.count('*').exec (err, count_json) =>
@@ -259,7 +259,7 @@ module.exports = class SqlCursor extends sync.Cursor
         })
     else
       callback(null, json)
-      
+
   _appendLimits: (query) ->
     query.limit(1) if @_cursor.$one
     query.limit(@_cursor.$limit) if @_cursor.$limit
@@ -281,7 +281,7 @@ module.exports = class SqlCursor extends sync.Cursor
       [col, dir] = @_parseSortField(sort)
       query.orderBy(col, dir)
     return query
-    
+
   # Make another query to get the complete set of related objects when they have been fitered by a where clause
   _appendCompleteRelations: (json, callback) ->
     new_query = @connection(@model_type.tableName())
